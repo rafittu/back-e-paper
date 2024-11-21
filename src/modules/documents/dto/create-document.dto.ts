@@ -4,7 +4,7 @@ import { DocumentOriginEnum, DocumentTypeEnum } from '../../../database/schema';
 export class CreateDocumentDto {
   @IsNotEmpty()
   @IsString()
-  document_name: string;
+  documentName: string;
 
   @IsNotEmpty()
   @IsString()
@@ -12,17 +12,17 @@ export class CreateDocumentDto {
 
   @IsNotEmpty()
   @IsEnum(DocumentOriginEnum)
-  document_origin: DocumentOriginEnum;
+  documentOrigin: DocumentOriginEnum;
 
   @IsNotEmpty()
   @IsEnum(DocumentTypeEnum)
-  document_type: DocumentTypeEnum;
+  documentType: DocumentTypeEnum;
 
   @IsNotEmpty()
   @IsNumber()
-  total_taxes: number;
+  totalTaxes: number;
 
   @IsNotEmpty()
   @IsNumber()
-  net_value: number;
+  netValue: number;
 }
