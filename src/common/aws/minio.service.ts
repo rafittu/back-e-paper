@@ -1,5 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
+import { AppError } from '../errors/Error';
 
 @Injectable()
 export class MinioService implements OnModuleInit {
@@ -12,6 +13,27 @@ export class MinioService implements OnModuleInit {
       secretAccessKey: process.env.MINIO_ROOT_PASSWORD,
       s3ForcePathStyle: true,
     });
+
+    this.ensureBucketExists(process.env.MINIO_BUCKET || 'epaper').catch(
+      (error) => {
+        throw new AppError('aws.minioService', 500, error);
+      },
+    );
+  }
+
+  private async ensureBucketExists(bucketName: string): Promise<void> {
+    try {
+      const buckets = await this.s3.listBuckets().promise();
+      const bucketExists = buckets.Buckets?.some(
+        (bucket) => bucket.Name === bucketName,
+      );
+
+      if (!bucketExists) {
+        await this.s3.createBucket({ Bucket: bucketName }).promise();
+      }
+    } catch (error) {
+      throw new AppError('aws-minioService.ensureBucketExists', 500, error);
+    }
   }
 
   async uploadFile(
@@ -19,13 +41,6 @@ export class MinioService implements OnModuleInit {
     key: string,
     fileBuffer: Buffer,
   ): Promise<AWS.S3.ManagedUpload.SendData> {
-    await this.s3
-      .createBucket({ Bucket: bucket })
-      .promise()
-      .catch((err) => {
-        if (err.code !== 'BucketAlreadyOwnedByYou') throw err;
-      });
-
     return this.s3
       .upload({
         Bucket: bucket,
