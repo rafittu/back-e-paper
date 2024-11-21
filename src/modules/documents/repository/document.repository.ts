@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { db } from '../../../database/db';
 import { documents } from '../../../database/schema';
-import { AppError } from 'src/common/errors/Error';
+import { AppError } from '../../../common/errors/Error';
 import { ICreateDocument, IDocument } from '../interfaces/documents.interface';
 import {
   mapCamelCaseToSnakeCase,
   mapSnakeCaseToCamelCase,
-} from 'src/modules/utils/document_utils';
+} from '../../../modules/utils/document_utils';
 
 @Injectable()
 export class DocumentsRepository {
