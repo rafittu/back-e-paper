@@ -4,6 +4,8 @@ import { CreateDocumentDto } from '../dto/create-document.dto';
 import { AppError } from '../../../common/errors/Error';
 import { MinioService } from '../../../common/aws/minio.service';
 import { normalizeFileName } from 'src/modules/utils/document_utils';
+import { IDocument } from '../interfaces/documents.interface';
+import { DocumentOriginEnum, DocumentTypeEnum } from 'src/database/schema';
 
 @Injectable()
 export class CreateDocumentService {
@@ -13,7 +15,10 @@ export class CreateDocumentService {
     private readonly minioService: MinioService,
   ) {}
 
-  async execute(dto: CreateDocumentDto, file: Express.Multer.File) {
+  async execute(
+    createDocument: CreateDocumentDto,
+    file: Express.Multer.File,
+  ): Promise<IDocument> {
     const BUCKET_NAME = process.env.MINIO_BUCKET || '';
 
     if (!file) {
@@ -24,7 +29,7 @@ export class CreateDocumentService {
       );
     }
 
-    if (dto.totalTaxes < 0 || dto.netValue < 0) {
+    if (createDocument.totalTaxes < 0 || createDocument.netValue < 0) {
       throw new AppError(
         'documents-service.createDocument',
         400,
@@ -40,12 +45,25 @@ export class CreateDocumentService {
         file.buffer,
       );
 
-      const document = await this.documentsRepository.createDocument(
-        dto,
-        uploadedFile.Location,
-      );
+      const data = await this.documentsRepository.createDocument({
+        ...createDocument,
+        fileUrl: uploadedFile.Location,
+      });
 
-      return document;
+      const createdDocument: IDocument = {
+        id: data.id,
+        documentName: data.documentName,
+        issuer: data.issuer,
+        documentOrigin: data.documentOrigin as DocumentOriginEnum,
+        documentType: data.documentType as DocumentTypeEnum,
+        totalTaxes: parseFloat(data.totalTaxes as unknown as string),
+        netValue: parseFloat(data.netValue as unknown as string),
+        fileUrl: data.fileUrl,
+        createdAt: new Date(data.createdAt),
+        updatedAt: new Date(data.updatedAt),
+      };
+
+      return createdDocument;
     } catch (error) {
       if (error instanceof AppError) {
         throw error;

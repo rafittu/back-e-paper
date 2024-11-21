@@ -9,6 +9,7 @@ import { CreateDocumentDto } from './dto/create-document.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
 import { CreateDocumentService } from './services/create_document.service';
+import { IDocument } from './interfaces/documents.interface';
 
 @Controller('documents')
 export class DocumentsController {
@@ -19,7 +20,7 @@ export class DocumentsController {
   async create(
     @Body() createDocumentDto: CreateDocumentDto,
     @UploadedFile() file: Express.Multer.File,
-  ) {
+  ): Promise<IDocument> {
     return this.createDocumentService.execute(createDocumentDto, file);
   }
 }

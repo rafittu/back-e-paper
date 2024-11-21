@@ -1,6 +1,5 @@
-import { Document } from '../../../database/schema';
-import { CreateDocumentDto } from '../dto/create-document.dto';
+import { ICreateDocument, IDocument } from './documents.interface';
 
 export interface IDocumentsRepository<> {
-  createDocument(data: CreateDocumentDto, fileUrl: string): Promise<Document>;
+  createDocument(data: ICreateDocument): Promise<IDocument>;
 }
