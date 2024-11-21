@@ -8,6 +8,13 @@
       "when": 1732128528615,
       "tag": "0000_windy_colossus",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1732215913512,
+      "tag": "0001_even_rhino",
+      "breakpoints": true
     }
   ]
 }
