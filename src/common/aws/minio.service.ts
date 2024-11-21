@@ -7,16 +7,20 @@ export class MinioService implements OnModuleInit {
   private s3: AWS.S3;
 
   onModuleInit() {
+    const credentials = new AWS.Credentials({
+      accessKeyId: process.env.MINIO_ROOT_USER || '',
+      secretAccessKey: process.env.MINIO_ROOT_PASSWORD || '',
+    });
+
     this.s3 = new AWS.S3({
       endpoint: process.env.MINIO_ENDPOINT || 'http://localhost:9000',
-      accessKeyId: process.env.MINIO_ROOT_USER,
-      secretAccessKey: process.env.MINIO_ROOT_PASSWORD,
+      credentials,
       s3ForcePathStyle: true,
     });
 
     this.ensureBucketExists(process.env.MINIO_BUCKET || 'epaper').catch(
       (error) => {
-        throw new AppError('aws.minioService', 500, error);
+        throw error;
       },
     );
   }
