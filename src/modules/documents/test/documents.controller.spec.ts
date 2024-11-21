@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DocumentsController } from '../documents.controller';
 import { CreateDocumentService } from '../services/create_document.service';
 import {
-  MockCreateDocument,
+  MockCreateDocumentDto,
   MockDocumentFile,
   MockIDocument,
 } from './mocks/documents.mock';
@@ -35,7 +35,7 @@ describe('DocumentsController', () => {
   describe('create document', () => {
     it('should create new document successfully', async () => {
       const result = await controller.create(
-        MockCreateDocument,
+        MockCreateDocumentDto,
         MockDocumentFile,
       );
 

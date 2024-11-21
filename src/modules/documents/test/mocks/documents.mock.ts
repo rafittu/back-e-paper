@@ -6,7 +6,7 @@ import {
 } from '../../../../database/schema';
 import { IDocument } from '../../interfaces/documents.interface';
 
-export const MockCreateDocument: CreateDocumentDto = {
+export const MockCreateDocumentDto: CreateDocumentDto = {
   documentName: faker.finance.accountName(),
   issuer: faker.person.fullName(),
   documentOrigin: DocumentOriginEnum.ELECTRONIC,
@@ -25,7 +25,7 @@ export const MockDocumentFile = {
 } as Express.Multer.File;
 
 export const MockIDocument: IDocument = {
-  ...MockCreateDocument,
+  ...MockCreateDocumentDto,
   id: faker.string.uuid(),
   fileUrl: faker.internet.url(),
   createdAt: faker.date.past(),

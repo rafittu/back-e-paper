@@ -3,7 +3,7 @@ import { CreateDocumentService } from '../services/create_document.service';
 import { MinioService } from '../../../common/aws/minio.service';
 import { IDocumentsRepository } from '../interfaces/repository.interface';
 import {
-  MockCreateDocument,
+  MockCreateDocumentDto,
   MockDocumentFile,
   MockIDocument,
 } from './mocks/documents.mock';
@@ -52,7 +52,7 @@ describe('DocumentsService', () => {
   describe('create document service', () => {
     it('should create a document successfully', async () => {
       const result = await createDocumentService.execute(
-        MockCreateDocument,
+        MockCreateDocumentDto,
         MockDocumentFile,
       );
 
@@ -63,7 +63,7 @@ describe('DocumentsService', () => {
 
     it('should throw an error if file is missing', async () => {
       try {
-        await createDocumentService.execute(MockCreateDocument, null as any);
+        await createDocumentService.execute(MockCreateDocumentDto, null as any);
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(400);
@@ -73,7 +73,7 @@ describe('DocumentsService', () => {
 
     it('should throw an error if totalTaxes or netValue are negative', async () => {
       const invalidAmountValue = {
-        ...MockCreateDocument,
+        ...MockCreateDocumentDto,
         totalTaxes: -100.5,
       };
 
@@ -96,7 +96,7 @@ describe('DocumentsService', () => {
 
       try {
         await createDocumentService.execute(
-          MockCreateDocument,
+          MockCreateDocumentDto,
           MockDocumentFile,
         );
       } catch (error) {
