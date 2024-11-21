@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS "unique_document_name_per_issuer" ON "documents" USING btree ("document_name","issuer");

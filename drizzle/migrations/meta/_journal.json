@@ -15,6 +15,13 @@
       "when": 1732215913512,
       "tag": "0001_even_rhino",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1732222841294,
+      "tag": "0002_friendly_thunderbolts",
+      "breakpoints": true
     }
   ]
 }
