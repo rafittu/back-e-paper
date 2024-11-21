@@ -1,7 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { db } from '../../../database/db';
 import { documents, NewDocument } from '../../../database/schema';
 import { CreateDocumentDto } from '../dto/create-document.dto';
+import { AppError } from 'src/common/errors/Error';
 
 @Injectable()
 export class DocumentsRepository {
@@ -36,8 +37,10 @@ export class DocumentsRepository {
 
       return this.toCamelCase(insertedDocument);
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Failed to insert document into database',
+      throw new AppError(
+        'documents-repository.createDocument',
+        500,
+        `failed to insert document into database. ${error}`,
       );
     }
   }

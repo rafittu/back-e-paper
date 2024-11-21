@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { IDocumentsRepository } from '../interfaces/repository.interface';
 import { CreateDocumentDto } from '../dto/create-document.dto';
 import { AppError } from '../../../common/errors/Error';
@@ -8,6 +8,7 @@ import { normalizeFileName } from 'src/modules/utils/document_utils';
 @Injectable()
 export class CreateDocumentService {
   constructor(
+    @Inject('IDocumentsRepository')
     private readonly documentsRepository: IDocumentsRepository,
     private readonly minioService: MinioService,
   ) {}
