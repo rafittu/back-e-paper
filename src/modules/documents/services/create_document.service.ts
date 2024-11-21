@@ -15,12 +15,10 @@ export class CreateDocumentService {
     private readonly minioService: MinioService,
   ) {}
 
-  async execute(
+  private validateCreateDocument(
     createDocument: CreateDocumentDto,
     file: Express.Multer.File,
-  ): Promise<IDocument> {
-    const BUCKET_NAME = process.env.MINIO_BUCKET || '';
-
+  ): void {
     if (!file) {
       throw new AppError(
         'documents-service.createDocument',
@@ -36,9 +34,19 @@ export class CreateDocumentService {
         'values cannot be negatived',
       );
     }
+  }
+
+  async execute(
+    createDocument: CreateDocumentDto,
+    file: Express.Multer.File,
+  ): Promise<IDocument> {
+    const BUCKET_NAME = process.env.MINIO_BUCKET || '';
+
+    this.validateCreateDocument(createDocument, file);
+
+    const normalizedFileName = normalizeFileName(file.originalname);
 
     try {
-      const normalizedFileName = normalizeFileName(file.originalname);
       const uploadedFile = await this.minioService.uploadFile(
         BUCKET_NAME,
         normalizedFileName,
@@ -50,7 +58,7 @@ export class CreateDocumentService {
         fileUrl: uploadedFile.Location,
       });
 
-      const createdDocument: IDocument = {
+      const createdDocument = {
         id: data.id,
         documentName: data.documentName,
         issuer: data.issuer,
