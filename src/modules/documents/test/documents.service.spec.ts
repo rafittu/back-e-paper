@@ -88,5 +88,22 @@ describe('DocumentsService', () => {
         expect(error.message).toBe('values cannot be negatived');
       }
     });
+
+    it('should throw an error if document creation fails', async () => {
+      jest
+        .spyOn(documentsRepository, 'createDocument')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await createDocumentService.execute(
+          MockCreateDocument,
+          MockDocumentFile,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('failed to create document');
+      }
+    });
   });
 });
