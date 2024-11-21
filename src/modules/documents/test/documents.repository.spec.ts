@@ -8,6 +8,7 @@ import {
   MockInsertResponse,
 } from './mocks/documents.mock';
 import { mapCamelCaseToSnakeCase } from '../../../modules/utils/document_utils';
+import { AppError } from '../../../common/errors/Error';
 
 jest.mock('../../../database/db');
 
@@ -52,6 +53,27 @@ describe('DocumentsRepository', () => {
       expect(mockInsert().values).toHaveBeenCalledWith(snackCaseData);
 
       expect(result).toEqual(MockIDocument);
+    });
+
+    it('should throw an error when insertion fails', async () => {
+      const mockInsert = jest.fn().mockReturnValue({
+        values: jest.fn().mockReturnThis(),
+        returning: jest
+          .fn()
+          .mockRejectedValueOnce(new Error('Database insert failed')),
+      });
+
+      (db.insert as jest.Mock).mockImplementation(mockInsert);
+
+      try {
+        await repository.createDocument(MockCreateDocumentInterface);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.message).toBe(
+          'failed to insert document into database. Error: Database insert failed',
+        );
+        expect(error.code).toBe(500);
+      }
     });
   });
 });
