@@ -1,9 +1,18 @@
 import { Module } from '@nestjs/common';
-import { DocumentsService } from './documents.service';
 import { DocumentsController } from './documents.controller';
+import { MinioService } from '../../common/aws/minio.service';
+import { DocumentsRepository } from './repository/document.repository';
+import { CreateDocumentService } from './services/create_document.service';
 
 @Module({
   controllers: [DocumentsController],
-  providers: [DocumentsService],
+  providers: [
+    MinioService,
+    {
+      provide: 'IDocumentsRepository',
+      useClass: DocumentsRepository,
+    },
+    CreateDocumentService,
+  ],
 })
 export class DocumentsModule {}
