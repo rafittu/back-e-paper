@@ -7,6 +7,7 @@ import {
   MockDocumentFile,
   MockIDocument,
 } from './mocks/documents.mock';
+import { AppError } from '../../../common/errors/Error';
 
 describe('DocumentsService', () => {
   let createDocumentService: CreateDocumentService;
@@ -58,6 +59,16 @@ describe('DocumentsService', () => {
       expect(minioService.uploadFile).toHaveBeenCalledTimes(1);
       expect(documentsRepository.createDocument).toHaveBeenCalledTimes(1);
       expect(result).toEqual(MockIDocument);
+    });
+
+    it('should throw an error if file is missing', async () => {
+      try {
+        await createDocumentService.execute(MockCreateDocument, null as any);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('file is required');
+      }
     });
   });
 });
