@@ -3,9 +3,9 @@ import { IDocumentsRepository } from '../interfaces/repository.interface';
 import { CreateDocumentDto } from '../dto/create-document.dto';
 import { AppError } from '../../../common/errors/Error';
 import { MinioService } from '../../../common/aws/minio.service';
-import { normalizeFileName } from 'src/modules/utils/document_utils';
+import { normalizeFileName } from '../../../modules/utils/document_utils';
 import { IDocument } from '../interfaces/documents.interface';
-import { DocumentOriginEnum, DocumentTypeEnum } from 'src/database/schema';
+import { DocumentOriginEnum, DocumentTypeEnum } from '../../../database/schema';
 
 @Injectable()
 export class CreateDocumentService {
