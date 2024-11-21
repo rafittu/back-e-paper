@@ -70,5 +70,23 @@ describe('DocumentsService', () => {
         expect(error.message).toBe('file is required');
       }
     });
+
+    it('should throw an error if totalTaxes or netValue are negative', async () => {
+      const invalidAmountValue = {
+        ...MockCreateDocument,
+        totalTaxes: -100.5,
+      };
+
+      try {
+        await createDocumentService.execute(
+          invalidAmountValue,
+          MockDocumentFile,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('values cannot be negatived');
+      }
+    });
   });
 });
