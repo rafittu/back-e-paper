@@ -41,7 +41,7 @@ jobs:
         run: npm install
 
       - name: Run Database Migrations
-        run: npm run run:migration
+        run: npm run migrate
 
       - name: Run Tests
         run: npm test
