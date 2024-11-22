@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { db } from '../../../database/db';
 import { documents } from '../../../database/schema';
 import { AppError } from '../../../common/errors/Error';
-import { ICreateDocument, IDocument } from '../interfaces/documents.interface';
+import {
+  ICreateDocument,
+  IDocument,
+  IUpdateDocument,
+} from '../interfaces/documents.interface';
 import {
   mapCamelCaseToSnakeCase,
   mapSnakeCaseToCamelCase,
@@ -60,10 +64,7 @@ export class DocumentsRepository {
     }
   }
 
-  async updateDocument(
-    id: string,
-    data: Partial<ICreateDocument>,
-  ): Promise<IDocument> {
+  async updateDocument(id: string, data: IUpdateDocument): Promise<IDocument> {
     const snakeCasedData = mapCamelCaseToSnakeCase(data);
 
     try {
