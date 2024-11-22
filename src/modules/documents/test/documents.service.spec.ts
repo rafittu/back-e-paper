@@ -37,6 +37,9 @@ describe('DocumentsService', () => {
             uploadFile: jest.fn().mockResolvedValue({
               Location: 'http://mockurl.com',
             }),
+            renameFile: jest.fn().mockResolvedValue({
+              fileUrl: 'http://mockurl.com',
+            }),
           },
         },
         {
