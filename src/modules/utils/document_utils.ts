@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { IDocument } from '../documents/interfaces/documents.interface';
 
 export function normalizeFileName(
   originalName: string,
@@ -43,4 +44,20 @@ export const mapSnakeCaseToCamelCase = (data: any): any => {
     }, {});
   }
   return data;
+};
+
+export const convertStringsToNumbers = (
+  data: IDocument | IDocument[],
+): IDocument | IDocument[] => {
+  const convert = (document: IDocument): IDocument => ({
+    ...document,
+    totalTaxes: parseFloat(document.totalTaxes as unknown as string),
+    netValue: parseFloat(document.netValue as unknown as string),
+  });
+
+  if (Array.isArray(data)) {
+    return data.map(convert);
+  }
+
+  return convert(data);
 };
