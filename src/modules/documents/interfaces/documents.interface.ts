@@ -7,6 +7,7 @@ export interface ICreateDocument {
   documentType: DocumentTypeEnum;
   totalTaxes: number;
   netValue: number;
+  bucketFileName: string;
   fileUrl: string;
 }
 

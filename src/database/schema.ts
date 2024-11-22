@@ -34,6 +34,7 @@ export const documents = pgTable(
     document_type: documentType('document_type').notNull(),
     total_taxes: decimal('total_taxes', { precision: 12, scale: 2 }).notNull(),
     net_value: decimal('net_value', { precision: 12, scale: 2 }).notNull(),
+    bucket_file_name: text('bucket_file_name').notNull(),
     file_url: text('file_url'),
     created_at: timestamp('created_at').defaultNow(),
     updated_at: timestamp('updated_at').defaultNow(),

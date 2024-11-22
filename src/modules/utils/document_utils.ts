@@ -1,14 +1,19 @@
 import { v4 as uuidv4 } from 'uuid';
 
-export function normalizeFileName(originalName: string): string {
+export function normalizeFileName(
+  originalName: string,
+  maxLength: number = 255,
+): string {
   const timestamp = Date.now();
-  const nonAlphanumericRegex = /[^a-z0-9]/g;
+  const nonAlphanumericRegex = /[^a-z0-9]/gi;
   const consecutiveHyphensRegex = /-+g/;
 
   const safeName = originalName
-    .toLowerCase()
     .replace(nonAlphanumericRegex, '-')
-    .replace(consecutiveHyphensRegex, '-');
+    .replace(consecutiveHyphensRegex, '-')
+    .toLowerCase()
+    .slice(0, maxLength - 36);
+
   return `${safeName}-${timestamp}-${uuidv4()}`;
 }
 

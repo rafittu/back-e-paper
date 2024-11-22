@@ -5,7 +5,6 @@ import { AppError } from '../../../common/errors/Error';
 import { MinioService } from '../../../common/aws/minio.service';
 import { normalizeFileName } from '../../../modules/utils/document_utils';
 import { IDocument } from '../interfaces/documents.interface';
-import { DocumentOriginEnum, DocumentTypeEnum } from '../../../database/schema';
 
 @Injectable()
 export class CreateDocumentService {
@@ -55,20 +54,16 @@ export class CreateDocumentService {
 
       const data = await this.documentsRepository.createDocument({
         ...createDocument,
+        bucketFileName: normalizedFileName,
         fileUrl: uploadedFile.Location,
       });
 
+      const { totalTaxes, netValue } = data;
+
       const createdDocument = {
-        id: data.id,
-        documentName: data.documentName,
-        issuer: data.issuer,
-        documentOrigin: data.documentOrigin as DocumentOriginEnum,
-        documentType: data.documentType as DocumentTypeEnum,
-        totalTaxes: parseFloat(data.totalTaxes as unknown as string),
-        netValue: parseFloat(data.netValue as unknown as string),
-        fileUrl: data.fileUrl,
-        createdAt: new Date(data.createdAt),
-        updatedAt: new Date(data.updatedAt),
+        ...data,
+        totalTaxes: parseFloat(totalTaxes as unknown as string),
+        netValue: parseFloat(netValue as unknown as string),
       };
 
       return createdDocument;
