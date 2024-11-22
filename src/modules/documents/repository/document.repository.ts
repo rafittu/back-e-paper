@@ -83,4 +83,16 @@ export class DocumentsRepository {
       );
     }
   }
+
+  async deleteDocument(id: string): Promise<void> {
+    try {
+      await db.delete(documents).where(eq(documents.id, id));
+    } catch (error) {
+      throw new AppError(
+        'documents-repository.deleteDocument',
+        500,
+        `failed to delete document. ${error}`,
+      );
+    }
+  }
 }

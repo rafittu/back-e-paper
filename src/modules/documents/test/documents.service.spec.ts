@@ -14,12 +14,14 @@ import { AppError } from '../../../common/errors/Error';
 import { FindAllDocumentsService } from '../services/find_all_documents.service';
 import { UpdateDocumentService } from '../services/update-document.service';
 import { FindDocumentByIdService } from '../services/document-by-id.service';
+import { DeleteDocumentService } from '../services/delete-document.service';
 
 describe('DocumentsService', () => {
   let createDocument: CreateDocumentService;
   let findAllDocuments: FindAllDocumentsService;
   let findDocumentById: FindDocumentByIdService;
   let updateDocument: UpdateDocumentService;
+  let deleteDocument: DeleteDocumentService;
 
   let minioService: MinioService;
   let documentsRepository: IDocumentsRepository;
@@ -31,6 +33,7 @@ describe('DocumentsService', () => {
         FindAllDocumentsService,
         UpdateDocumentService,
         FindDocumentByIdService,
+        DeleteDocumentService,
         {
           provide: MinioService,
           useValue: {
@@ -40,6 +43,7 @@ describe('DocumentsService', () => {
             renameFile: jest.fn().mockResolvedValue({
               fileUrl: 'http://mockurl.com',
             }),
+            deleteFile: jest.fn().mockResolvedValue(null),
           },
         },
         {
@@ -47,8 +51,9 @@ describe('DocumentsService', () => {
           useValue: {
             createDocument: jest.fn().mockResolvedValue(MockIDocument),
             findAllDocuments: jest.fn().mockResolvedValue(MockDocumentsList),
-            updateDocument: jest.fn().mockResolvedValue(MockUpdatedDocument),
             findDocumentById: jest.fn().mockResolvedValue(MockIDocument),
+            updateDocument: jest.fn().mockResolvedValue(MockUpdatedDocument),
+            deleteDocument: jest.fn().mockResolvedValue(null),
           },
         },
       ],
@@ -62,6 +67,7 @@ describe('DocumentsService', () => {
       FindDocumentByIdService,
     );
     updateDocument = module.get<UpdateDocumentService>(UpdateDocumentService);
+    deleteDocument = module.get<DeleteDocumentService>(DeleteDocumentService);
 
     minioService = module.get<MinioService>(MinioService);
     documentsRepository = module.get<IDocumentsRepository>(
@@ -74,6 +80,7 @@ describe('DocumentsService', () => {
     expect(findAllDocuments).toBeDefined();
     expect(findDocumentById).toBeDefined();
     expect(updateDocument).toBeDefined();
+    expect(deleteDocument).toBeDefined();
     expect(minioService).toBeDefined();
   });
 
@@ -208,6 +215,42 @@ describe('DocumentsService', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(400);
         expect(error.message).toBe('failed to update document');
+      }
+    });
+  });
+
+  describe('delete document', () => {
+    it('should delete a document successfully', async () => {
+      await deleteDocument.execute(MockIDocument.id);
+
+      expect(minioService.deleteFile).toHaveBeenCalledTimes(1);
+      expect(documentsRepository.deleteDocument).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw an error if document not found', async () => {
+      jest
+        .spyOn(documentsRepository, 'findDocumentById')
+        .mockResolvedValueOnce(null);
+      try {
+        await deleteDocument.execute(MockIDocument.id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('invalid document id');
+      }
+    });
+
+    it('should throw an error if delete document fails', async () => {
+      jest
+        .spyOn(documentsRepository, 'deleteDocument')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await deleteDocument.execute(MockIDocument.id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('failed to delete document');
       }
     });
   });

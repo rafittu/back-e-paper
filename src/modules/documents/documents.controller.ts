@@ -7,6 +7,7 @@ import {
   Get,
   Put,
   Param,
+  Delete,
 } from '@nestjs/common';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -17,6 +18,7 @@ import { FindAllDocumentsService } from './services/find_all_documents.service';
 import { FindDocumentByIdService } from './services/document-by-id.service';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import { UpdateDocumentService } from './services/update-document.service';
+import { DeleteDocumentService } from './services/delete-document.service';
 
 @Controller('documents')
 export class DocumentsController {
@@ -25,6 +27,7 @@ export class DocumentsController {
     private readonly findAllDocuments: FindAllDocumentsService,
     private readonly findDocumentById: FindDocumentByIdService,
     private readonly updateDocument: UpdateDocumentService,
+    private readonly deleteDocument: DeleteDocumentService,
   ) {}
 
   @Post('/create')
@@ -52,5 +55,11 @@ export class DocumentsController {
     @Body() updateDocumentDto: UpdateDocumentDto,
   ): Promise<IDocument> {
     return this.updateDocument.execute(id, updateDocumentDto);
+  }
+
+  @Delete('delete/:id')
+  async delete(@Param('id') id: string): Promise<{ message: string }> {
+    await this.deleteDocument.execute(id);
+    return { message: `document with id ${id} successfully deleted` };
   }
 }
