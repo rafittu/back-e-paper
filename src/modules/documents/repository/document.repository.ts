@@ -7,6 +7,7 @@ import {
   mapCamelCaseToSnakeCase,
   mapSnakeCaseToCamelCase,
 } from '../../../modules/utils/document_utils';
+import { eq } from 'drizzle-orm';
 
 @Injectable()
 export class DocumentsRepository {
@@ -38,6 +39,29 @@ export class DocumentsRepository {
         'documents-repository.findAllDocuments',
         500,
         `failed to get documents from database. ${error}`,
+      );
+    }
+  }
+
+  async updateDocument(
+    id: string,
+    data: Partial<ICreateDocument>,
+  ): Promise<IDocument> {
+    const snakeCasedData = mapCamelCaseToSnakeCase(data);
+
+    try {
+      const [updatedDocument] = await db
+        .update(documents)
+        .set(snakeCasedData)
+        .where(eq(documents.id, id))
+        .returning();
+
+      return mapSnakeCaseToCamelCase(updatedDocument);
+    } catch (error) {
+      throw new AppError(
+        'documents-repository.updateDocument',
+        500,
+        `failed to update document in database. ${error}`,
       );
     }
   }
