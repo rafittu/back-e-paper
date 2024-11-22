@@ -53,4 +53,39 @@ export class MinioService implements OnModuleInit {
       })
       .promise();
   }
+
+  async deleteFile(
+    bucket: string,
+    key: string,
+  ): Promise<AWS.S3.DeleteObjectsOutput> {
+    return await this.s3
+      .deleteObject({
+        Bucket: bucket,
+        Key: key,
+      })
+      .promise();
+  }
+
+  async renameFile(
+    bucket: string,
+    oldKey: string,
+    newKey: string,
+  ): Promise<{ fileUrl: string }> {
+    await this.s3
+      .copyObject({
+        Bucket: bucket,
+        CopySource: `/${bucket}/${oldKey}`,
+        Key: newKey,
+      })
+      .promise();
+
+    await this.deleteFile(bucket, oldKey);
+
+    const fileUrl = await this.s3.getSignedUrlPromise('getObject', {
+      Bucket: bucket,
+      Key: newKey,
+    });
+
+    return { fileUrl };
+  }
 }
