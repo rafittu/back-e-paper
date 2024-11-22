@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { IDocumentsRepository } from '../interfaces/repository.interface';
 import { UpdateDocumentDto } from '../dto/update-document.dto';
 import { IDocument } from '../interfaces/documents.interface';
-import { AppError } from 'src/common/errors/Error';
-import { parseDocumentNumbers } from 'src/modules/utils/document_utils';
+import { AppError } from '../../../common/errors/Error';
+import { parseDocumentNumbers } from '../../../modules/utils/document_utils';
 import { plainToInstance } from 'class-transformer';
 
 @Injectable()
