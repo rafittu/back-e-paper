@@ -6,13 +6,21 @@ import {
   MockDocumentFile,
   MockDocumentsList,
   MockIDocument,
+  MockUpdatedDocument,
+  MockUpdateDocumentDto,
 } from './mocks/documents.mock';
 import { FindAllDocumentsService } from '../services/find-all-documents.service';
+import { UpdateDocumentService } from '../services/update-document.service';
+import { DocumentByIdService } from '../services/document-by-id.service';
+import { DeleteDocumentService } from '../services/delete-document.service';
 
 describe('DocumentsController', () => {
   let controller: DocumentsController;
   let createDocument: CreateDocumentService;
   let findAllDocuments: FindAllDocumentsService;
+  let findDocumentById: DocumentByIdService;
+  let updateDocument: UpdateDocumentService;
+  let deleteDocument: DeleteDocumentService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,6 +38,24 @@ describe('DocumentsController', () => {
             execute: jest.fn().mockResolvedValue(MockDocumentsList),
           },
         },
+        {
+          provide: DocumentByIdService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(MockIDocument),
+          },
+        },
+        {
+          provide: UpdateDocumentService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(MockUpdatedDocument),
+          },
+        },
+        {
+          provide: DeleteDocumentService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(null),
+          },
+        },
       ],
     }).compile();
 
@@ -38,6 +64,9 @@ describe('DocumentsController', () => {
     findAllDocuments = module.get<FindAllDocumentsService>(
       FindAllDocumentsService,
     );
+    findDocumentById = module.get<DocumentByIdService>(DocumentByIdService);
+    updateDocument = module.get<UpdateDocumentService>(UpdateDocumentService);
+    deleteDocument = module.get<DeleteDocumentService>(DeleteDocumentService);
   });
 
   it('should be defined', () => {
@@ -62,6 +91,38 @@ describe('DocumentsController', () => {
 
       expect(findAllDocuments.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(MockDocumentsList);
+    });
+  });
+
+  describe('find document by id', () => {
+    it('should get document successfully', async () => {
+      const result = await controller.findById(MockIDocument.id);
+
+      expect(findDocumentById.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(MockIDocument);
+    });
+  });
+
+  describe('update document', () => {
+    it('should update document successfully', async () => {
+      const result = await controller.update(
+        MockIDocument.id,
+        MockUpdateDocumentDto,
+      );
+
+      expect(updateDocument.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(MockUpdatedDocument);
+    });
+  });
+
+  describe('delete document', () => {
+    it('should delete document successfully', async () => {
+      const result = await controller.delete(MockIDocument.id);
+
+      expect(deleteDocument.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual({
+        message: `document with id ${MockIDocument.id} successfully deleted`,
+      });
     });
   });
 });

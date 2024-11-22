@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { IDocumentsRepository } from '../interfaces/repository.interface';
-import { convertStringsToNumbers } from '../../utils/document-utils';
+import { parseDocumentNumbers } from '../../utils/document-utils';
 import { IDocument } from '../interfaces/documents.interface';
 import { FilterDocumentsDto } from '../dto/filter-documents.dto';
 
@@ -16,7 +16,7 @@ export class DocumentsByFilterService {
       const documents =
         await this.documentsRepository.findDocumentsByFilter(filters);
 
-      return convertStringsToNumbers(documents) as IDocument[];
+      return parseDocumentNumbers(documents) as IDocument[];
     } catch (error) {
       throw error;
     }

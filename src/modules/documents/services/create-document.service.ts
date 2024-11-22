@@ -4,7 +4,7 @@ import { CreateDocumentDto } from '../dto/create-document.dto';
 import { AppError } from '../../../common/errors/Error';
 import { MinioService } from '../../../common/aws/minio.service';
 import {
-  convertStringsToNumbers,
+  parseDocumentNumbers,
   normalizeFileName,
 } from '../../utils/document-utils';
 import { IDocument } from '../interfaces/documents.interface';
@@ -61,7 +61,7 @@ export class CreateDocumentService {
         fileUrl: uploadedFile.Location,
       });
 
-      return convertStringsToNumbers(data) as IDocument;
+      return parseDocumentNumbers(data) as IDocument;
     } catch (error) {
       if (error instanceof AppError) {
         throw error;

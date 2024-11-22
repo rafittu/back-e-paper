@@ -4,16 +4,16 @@ import { parseDocumentNumbers } from '../../../modules/utils/document-utils';
 import { IDocument } from '../interfaces/documents.interface';
 
 @Injectable()
-export class FindAllDocumentsService {
+export class DocumentByIdService {
   constructor(
     @Inject('IDocumentsRepository')
     private readonly documentsRepository: IDocumentsRepository,
   ) {}
 
-  async execute(): Promise<IDocument[]> {
+  async execute(id: string): Promise<IDocument> {
     try {
-      const documents = await this.documentsRepository.findAllDocuments();
-      return parseDocumentNumbers(documents) as IDocument[];
+      const document = await this.documentsRepository.findDocumentById(id);
+      return parseDocumentNumbers(document) as IDocument;
     } catch (error) {
       throw error;
     }
