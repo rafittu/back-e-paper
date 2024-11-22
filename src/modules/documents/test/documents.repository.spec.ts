@@ -111,6 +111,56 @@ describe('DocumentsRepository', () => {
     });
   });
 
+  describe('find documents by filter', () => {
+    it('should retrieve documents from the database', async () => {
+      const mockFilters = { issuer: MockIDocument.issuer };
+      const mockSelect = jest.fn().mockResolvedValueOnce(MockDocumentsList);
+
+      (db.select as jest.Mock).mockImplementation(() => ({
+        from: jest.fn().mockReturnThis(),
+        where: jest.fn().mockImplementation(() => mockSelect()),
+      }));
+
+      const result = await repository.findDocumentsByFilter(mockFilters);
+
+      expect(db.select).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(MockDocumentsList);
+    });
+
+    it('should return all documents if no filters are provided', async () => {
+      const mockSelect = jest.fn().mockResolvedValueOnce(MockDocumentsList);
+
+      (db.select as jest.Mock).mockImplementation(() => ({
+        from: jest.fn().mockReturnValue(mockSelect()),
+      }));
+
+      const result = await repository.findDocumentsByFilter({});
+
+      expect(db.select).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(MockDocumentsList);
+    });
+
+    it('should throw an error if retrieving documents fails', async () => {
+      const mockFilters = { issuer: MockIDocument.issuer };
+      const mockSelect = jest.fn().mockImplementation(() => {
+        throw new Error('Database error');
+      });
+
+      (db.select as jest.Mock).mockImplementation(() => ({
+        from: jest.fn().mockReturnThis(),
+        where: jest.fn().mockImplementation(() => mockSelect()),
+      }));
+
+      try {
+        await repository.findDocumentsByFilter(mockFilters);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.message).toContain('failed to filter documents');
+        expect(error.code).toBe(500);
+      }
+    });
+  });
+
   describe('find document by id', () => {
     it('should return a document by id', async () => {
       const mockSelect = jest.fn().mockResolvedValueOnce([MockInsertResponse]);
