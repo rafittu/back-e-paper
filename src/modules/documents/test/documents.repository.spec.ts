@@ -111,6 +111,39 @@ describe('DocumentsRepository', () => {
     });
   });
 
+  describe('find document by id', () => {
+    it('should return a document by id', async () => {
+      const mockSelect = jest.fn().mockResolvedValueOnce([MockInsertResponse]);
+      (db.select as jest.Mock).mockImplementation(() => ({
+        from: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnValue(mockSelect()),
+      }));
+
+      const result = await repository.findDocumentById(MockIDocument.id);
+
+      expect(db.select).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(MockIDocument);
+    });
+
+    it('should throw an error if retrieving document fails', async () => {
+      const mockSelect = jest.fn().mockImplementation(() => {
+        throw new Error('Database error');
+      });
+
+      (db.select as jest.Mock).mockImplementation(mockSelect);
+
+      try {
+        await repository.findDocumentById(MockIDocument.id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.message).toBe(
+          'failed to retrieve document by id. Error: Database error',
+        );
+        expect(error.code).toBe(500);
+      }
+    });
+  });
+
   describe('update document', () => {
     it('should update a document successfully', async () => {
       const mockUpdate = jest.fn().mockReturnValue({

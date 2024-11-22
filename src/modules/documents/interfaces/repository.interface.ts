@@ -7,4 +7,5 @@ export interface IDocumentsRepository<> {
     id: string,
     data: Partial<ICreateDocument>,
   ): Promise<IDocument>;
+  findDocumentById(id: string): Promise<IDocument>;
 }

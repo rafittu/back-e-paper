@@ -13,10 +13,12 @@ import {
 import { AppError } from '../../../common/errors/Error';
 import { FindAllDocumentsService } from '../services/find_all_documents.service';
 import { UpdateDocumentService } from '../services/update-document.service';
+import { FindDocumentByIdService } from '../services/document-by-id.service';
 
 describe('DocumentsService', () => {
   let createDocument: CreateDocumentService;
   let findAllDocuments: FindAllDocumentsService;
+  let findDocumentById: FindDocumentByIdService;
   let updateDocument: UpdateDocumentService;
 
   let minioService: MinioService;
@@ -28,6 +30,7 @@ describe('DocumentsService', () => {
         CreateDocumentService,
         FindAllDocumentsService,
         UpdateDocumentService,
+        FindDocumentByIdService,
         {
           provide: MinioService,
           useValue: {
@@ -42,6 +45,7 @@ describe('DocumentsService', () => {
             createDocument: jest.fn().mockResolvedValue(MockIDocument),
             findAllDocuments: jest.fn().mockResolvedValue(MockDocumentsList),
             updateDocument: jest.fn().mockResolvedValue(MockUpdatedDocument),
+            findDocumentById: jest.fn().mockResolvedValue(MockIDocument),
           },
         },
       ],
@@ -50,6 +54,9 @@ describe('DocumentsService', () => {
     createDocument = module.get<CreateDocumentService>(CreateDocumentService);
     findAllDocuments = module.get<FindAllDocumentsService>(
       FindAllDocumentsService,
+    );
+    findDocumentById = module.get<FindDocumentByIdService>(
+      FindDocumentByIdService,
     );
     updateDocument = module.get<UpdateDocumentService>(UpdateDocumentService);
 
@@ -62,6 +69,7 @@ describe('DocumentsService', () => {
   it('should be defined', () => {
     expect(createDocument).toBeDefined();
     expect(findAllDocuments).toBeDefined();
+    expect(findDocumentById).toBeDefined();
     expect(updateDocument).toBeDefined();
     expect(minioService).toBeDefined();
   });
@@ -133,6 +141,27 @@ describe('DocumentsService', () => {
 
       try {
         await findAllDocuments.execute();
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+      }
+    });
+  });
+
+  describe('find all documents', () => {
+    it('should retrieve document by id', async () => {
+      const result = await findDocumentById.execute(MockIDocument.id);
+
+      expect(documentsRepository.findDocumentById).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(MockIDocument);
+    });
+
+    it('should throw an error if get documents fails', async () => {
+      jest
+        .spyOn(documentsRepository, 'findDocumentById')
+        .mockRejectedValueOnce(new AppError());
+
+      try {
+        await findDocumentById.execute(MockIDocument.id);
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
       }

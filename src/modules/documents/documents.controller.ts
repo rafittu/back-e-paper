@@ -14,6 +14,7 @@ import { Express } from 'express';
 import { CreateDocumentService } from './services/create_document.service';
 import { IDocument } from './interfaces/documents.interface';
 import { FindAllDocumentsService } from './services/find_all_documents.service';
+import { FindDocumentByIdService } from './services/document-by-id.service';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import { UpdateDocumentService } from './services/update-document.service';
 
@@ -22,6 +23,7 @@ export class DocumentsController {
   constructor(
     private readonly createDocument: CreateDocumentService,
     private readonly findAllDocuments: FindAllDocumentsService,
+    private readonly findDocumentById: FindDocumentByIdService,
     private readonly updateDocument: UpdateDocumentService,
   ) {}
 
@@ -37,6 +39,11 @@ export class DocumentsController {
   @Get('/all')
   async findAll(): Promise<IDocument[]> {
     return this.findAllDocuments.execute();
+  }
+
+  @Get('/:id')
+  async findById(@Param('id') id: string): Promise<IDocument> {
+    return this.findDocumentById.execute(id);
   }
 
   @Put('/update/:id')
