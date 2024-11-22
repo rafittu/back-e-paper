@@ -46,7 +46,7 @@ export const mapSnakeCaseToCamelCase = (data: any): any => {
   return data;
 };
 
-export const convertStringsToNumbers = (
+export const parseDocumentNumbers = (
   data: IDocument | IDocument[],
 ): IDocument | IDocument[] => {
   const convert = (document: IDocument): IDocument => ({

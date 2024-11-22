@@ -3,7 +3,7 @@ import { IDocumentsRepository } from '../interfaces/repository.interface';
 import { UpdateDocumentDto } from '../dto/update-document.dto';
 import { IDocument } from '../interfaces/documents.interface';
 import { AppError } from 'src/common/errors/Error';
-import { convertStringsToNumbers } from 'src/modules/utils/document_utils';
+import { parseDocumentNumbers } from 'src/modules/utils/document_utils';
 import { plainToInstance } from 'class-transformer';
 
 @Injectable()
@@ -33,7 +33,7 @@ export class UpdateDocumentService {
         document,
       );
 
-      return convertStringsToNumbers(updatedDocument) as IDocument;
+      return parseDocumentNumbers(updatedDocument) as IDocument;
     } catch (error) {
       if (error instanceof AppError) {
         throw error;
