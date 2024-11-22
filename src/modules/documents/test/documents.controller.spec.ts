@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DocumentsController } from '../documents.controller';
-import { CreateDocumentService } from '../services/create_document.service';
+import { CreateDocumentService } from '../services/create-document.service';
 import {
   MockCreateDocumentDto,
   MockDocumentFile,
   MockDocumentsList,
   MockIDocument,
 } from './mocks/documents.mock';
-import { FindAllDocumentsService } from '../services/find_all_documents.service';
+import { FindAllDocumentsService } from '../services/find-all-documents.service';
 
 describe('DocumentsController', () => {
   let controller: DocumentsController;

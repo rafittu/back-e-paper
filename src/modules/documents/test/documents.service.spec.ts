@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateDocumentService } from '../services/create_document.service';
+import { CreateDocumentService } from '../services/create-document.service';
 import { MinioService } from '../../../common/aws/minio.service';
 import { IDocumentsRepository } from '../interfaces/repository.interface';
 import {
@@ -9,7 +9,7 @@ import {
   MockIDocument,
 } from './mocks/documents.mock';
 import { AppError } from '../../../common/errors/Error';
-import { FindAllDocumentsService } from '../services/find_all_documents.service';
+import { FindAllDocumentsService } from '../services/find-all-documents.service';
 
 describe('DocumentsService', () => {
   let createDocument: CreateDocumentService;

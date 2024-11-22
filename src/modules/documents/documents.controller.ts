@@ -10,9 +10,9 @@ import {
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
-import { CreateDocumentService } from './services/create_document.service';
+import { CreateDocumentService } from './services/create-document.service';
 import { IDocument } from './interfaces/documents.interface';
-import { FindAllDocumentsService } from './services/find_all_documents.service';
+import { FindAllDocumentsService } from './services/find-all-documents.service';
 import { FilterDocumentsDto } from './dto/filter-documents.dto';
 import { DocumentsByFilterService } from './services/documents-by-filter.service';
 

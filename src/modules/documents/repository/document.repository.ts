@@ -6,7 +6,7 @@ import { ICreateDocument, IDocument } from '../interfaces/documents.interface';
 import {
   mapCamelCaseToSnakeCase,
   mapSnakeCaseToCamelCase,
-} from '../../../modules/utils/document_utils';
+} from '../../utils/document-utils';
 
 @Injectable()
 export class DocumentsRepository {

@@ -6,7 +6,7 @@ import { MinioService } from '../../../common/aws/minio.service';
 import {
   convertStringsToNumbers,
   normalizeFileName,
-} from '../../../modules/utils/document_utils';
+} from '../../utils/document-utils';
 import { IDocument } from '../interfaces/documents.interface';
 
 @Injectable()

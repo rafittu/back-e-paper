@@ -8,7 +8,7 @@ import {
   MockIDocument,
   MockInsertResponse,
 } from './mocks/documents.mock';
-import { mapCamelCaseToSnakeCase } from '../../../modules/utils/document_utils';
+import { mapCamelCaseToSnakeCase } from '../../utils/document-utils';
 import { AppError } from '../../../common/errors/Error';
 
 jest.mock('../../../database/db');
