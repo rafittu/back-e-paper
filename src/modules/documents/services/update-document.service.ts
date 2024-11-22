@@ -26,6 +26,17 @@ export class UpdateDocumentService {
 
     let document: IUpdateDocument = {};
 
+    const existingDocument =
+      await this.documentsRepository.findDocumentById(id);
+
+    if (!existingDocument) {
+      throw new AppError(
+        'documents-service.updateDocument',
+        404,
+        'document not found',
+      );
+    }
+
     if (updateDocumentDto.totalTaxes < 0 || updateDocumentDto.netValue < 0) {
       throw new AppError(
         'documents-service.updateDocument',
@@ -35,20 +46,18 @@ export class UpdateDocumentService {
     }
 
     if (updateDocumentDto.documentName) {
-      const existingDocument =
-        await this.documentsRepository.findDocumentById(id);
-
       const newNormalizedFileName = normalizeFileName(
         updateDocumentDto.documentName,
       );
 
-      await this.minioService.renameFile(
+      const bucketDocument = await this.minioService.renameFile(
         BUCKET_NAME,
         existingDocument.bucketFileName,
         newNormalizedFileName,
       );
 
       document.bucketFileName = newNormalizedFileName;
+      document.fileUrl = bucketDocument.fileUrl;
     }
 
     try {
