@@ -28,4 +28,17 @@ export class DocumentsRepository {
       );
     }
   }
+
+  async findAllDocuments(): Promise<IDocument[]> {
+    try {
+      const allDocuments = await db.select().from(documents);
+      return allDocuments.map(mapSnakeCaseToCamelCase);
+    } catch (error) {
+      throw new AppError(
+        'documents-repository.findAllDocuments',
+        500,
+        `failed to get documents from database. ${error}`,
+      );
+    }
+  }
 }
