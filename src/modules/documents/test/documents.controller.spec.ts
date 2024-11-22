@@ -13,11 +13,13 @@ import { FindAllDocumentsService } from '../services/find-all-documents.service'
 import { UpdateDocumentService } from '../services/update-document.service';
 import { DocumentByIdService } from '../services/document-by-id.service';
 import { DeleteDocumentService } from '../services/delete-document.service';
+import { DocumentsByFilterService } from '../services/documents-by-filter.service';
 
 describe('DocumentsController', () => {
   let controller: DocumentsController;
   let createDocument: CreateDocumentService;
   let findAllDocuments: FindAllDocumentsService;
+  let findDocumentByFilter: DocumentsByFilterService;
   let findDocumentById: DocumentByIdService;
   let updateDocument: UpdateDocumentService;
   let deleteDocument: DeleteDocumentService;
@@ -34,6 +36,12 @@ describe('DocumentsController', () => {
         },
         {
           provide: FindAllDocumentsService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(MockDocumentsList),
+          },
+        },
+        {
+          provide: DocumentsByFilterService,
           useValue: {
             execute: jest.fn().mockResolvedValue(MockDocumentsList),
           },
@@ -64,6 +72,9 @@ describe('DocumentsController', () => {
     findAllDocuments = module.get<FindAllDocumentsService>(
       FindAllDocumentsService,
     );
+    findDocumentByFilter = module.get<DocumentsByFilterService>(
+      DocumentsByFilterService,
+    );
     findDocumentById = module.get<DocumentByIdService>(DocumentByIdService);
     updateDocument = module.get<UpdateDocumentService>(UpdateDocumentService);
     deleteDocument = module.get<DeleteDocumentService>(DeleteDocumentService);
@@ -90,6 +101,16 @@ describe('DocumentsController', () => {
       const result = await controller.findAll();
 
       expect(findAllDocuments.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(MockDocumentsList);
+    });
+  });
+
+  describe('find documents by filter', () => {
+    it('should get documents by filter successfully', async () => {
+      const filters = { issuer: MockIDocument.issuer };
+      const result = await controller.findByFilters(filters);
+
+      expect(findDocumentByFilter.execute).toHaveBeenCalledWith(filters);
       expect(result).toEqual(MockDocumentsList);
     });
   });
