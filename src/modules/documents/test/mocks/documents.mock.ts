@@ -8,6 +8,7 @@ import {
   ICreateDocument,
   IDocument,
 } from '../../interfaces/documents.interface';
+import { UpdateDocumentDto } from '../../dto/update-document.dto';
 
 export const MockCreateDocumentDto: CreateDocumentDto = {
   documentName: faker.finance.accountName(),
@@ -55,3 +56,14 @@ export const MockIDocument: IDocument = {
 };
 
 export const MockDocumentsList: IDocument[] = [MockIDocument, MockIDocument];
+
+export const MockUpdateDocumentDto: UpdateDocumentDto = {
+  documentName: faker.finance.accountName(),
+  totalTaxes: parseFloat(faker.finance.amount()),
+};
+
+export const MockUpdatedDocument: IDocument = {
+  ...MockIDocument,
+  documentName: MockUpdateDocumentDto.documentName,
+  totalTaxes: MockUpdateDocumentDto.totalTaxes,
+};

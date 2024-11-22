@@ -7,6 +7,7 @@ import {
   MockDocumentsList,
   MockIDocument,
   MockInsertResponse,
+  MockUpdateDocumentDto,
 } from './mocks/documents.mock';
 import { mapCamelCaseToSnakeCase } from '../../../modules/utils/document_utils';
 import { AppError } from '../../../common/errors/Error';
@@ -104,6 +105,50 @@ describe('DocumentsRepository', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.message).toBe(
           'failed to get documents from database. Error: Database error',
+        );
+        expect(error.code).toBe(500);
+      }
+    });
+  });
+
+  describe('update document', () => {
+    it('should update a document successfully', async () => {
+      const mockUpdate = jest.fn().mockReturnValue({
+        set: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        returning: jest.fn().mockResolvedValueOnce([MockInsertResponse]),
+      });
+
+      (db.update as jest.Mock).mockImplementation(mockUpdate);
+
+      const snackCaseData = mapCamelCaseToSnakeCase(MockUpdateDocumentDto);
+
+      const result = await repository.updateDocument(
+        MockIDocument.id,
+        MockUpdateDocumentDto,
+      );
+
+      expect(db.update).toHaveBeenCalledWith(documents);
+      expect(mockUpdate().set).toHaveBeenCalledWith(snackCaseData);
+      expect(result).toEqual(MockIDocument);
+    });
+
+    it('should throw an error if update fails', async () => {
+      const mockUpdate = jest.fn().mockImplementation(() => {
+        throw new Error('Database error');
+      });
+
+      (db.update as jest.Mock).mockImplementation(mockUpdate);
+
+      try {
+        await repository.updateDocument(
+          MockIDocument.id,
+          MockUpdateDocumentDto,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.message).toBe(
+          'failed to update document in database. Error: Database error',
         );
         expect(error.code).toBe(500);
       }
