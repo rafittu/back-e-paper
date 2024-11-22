@@ -6,7 +6,7 @@ import { AppError } from '../../../common/errors/Error';
 import {
   normalizeFileName,
   parseDocumentNumbers,
-} from '../../../modules/utils/document_utils';
+} from '../../../modules/utils/document-utils';
 import { plainToInstance } from 'class-transformer';
 import { MinioService } from '../../../common/aws/minio.service';
 

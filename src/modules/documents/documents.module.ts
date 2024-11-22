@@ -2,10 +2,11 @@ import { Module } from '@nestjs/common';
 import { DocumentsController } from './documents.controller';
 import { MinioService } from '../../common/aws/minio.service';
 import { DocumentsRepository } from './repository/document.repository';
-import { CreateDocumentService } from './services/create_document.service';
-import { FindAllDocumentsService } from './services/find_all_documents.service';
+import { CreateDocumentService } from './services/create-document.service';
+import { FindAllDocumentsService } from './services/find-all-documents.service';
+import { DocumentsByFilterService } from './services/documents-by-filter.service';
 import { UpdateDocumentService } from './services/update-document.service';
-import { FindDocumentByIdService } from './services/document-by-id.service';
+import { DocumentByIdService } from './services/document-by-id.service';
 import { DeleteDocumentService } from './services/delete-document.service';
 
 @Module({
@@ -18,7 +19,8 @@ import { DeleteDocumentService } from './services/delete-document.service';
     },
     CreateDocumentService,
     FindAllDocumentsService,
-    FindDocumentByIdService,
+    DocumentsByFilterService,
+    DocumentByIdService,
     UpdateDocumentService,
     DeleteDocumentService,
   ],

@@ -10,8 +10,10 @@ import {
 import {
   mapCamelCaseToSnakeCase,
   mapSnakeCaseToCamelCase,
-} from '../../../modules/utils/document_utils';
-import { eq } from 'drizzle-orm';
+} from '../../utils/document-utils';
+import { FilterDocumentsDto } from '../dto/filter-documents.dto';
+import { and, eq } from 'drizzle-orm';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class DocumentsRepository {
@@ -43,6 +45,40 @@ export class DocumentsRepository {
         'documents-repository.findAllDocuments',
         500,
         `failed to get documents from database. ${error}`,
+      );
+    }
+  }
+
+  async findDocumentsByFilter(
+    filters: FilterDocumentsDto,
+  ): Promise<IDocument[]> {
+    const filtersData = plainToInstance(Object, filters);
+    const snakeCaseFilters = mapCamelCaseToSnakeCase(filtersData);
+
+    try {
+      const conditions: any[] = [];
+
+      Object.entries(snakeCaseFilters).forEach(([key, value]) => {
+        if (value !== undefined && key in documents) {
+          conditions.push(eq(documents[key], value));
+        }
+      });
+
+      const query =
+        conditions.length > 0
+          ? db
+              .select()
+              .from(documents)
+              .where(and(...conditions))
+          : db.select().from(documents);
+
+      const results = await query;
+      return results.map(mapSnakeCaseToCamelCase);
+    } catch (error) {
+      throw new AppError(
+        'documents-repository.findDocumentsByFilter',
+        500,
+        `failed to filter documents. ${error}`,
       );
     }
   }

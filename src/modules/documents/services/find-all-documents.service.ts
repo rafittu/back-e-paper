@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { IDocumentsRepository } from '../interfaces/repository.interface';
-import { parseDocumentNumbers } from '../../../modules/utils/document_utils';
+import { parseDocumentNumbers } from '../../../modules/utils/document-utils';
 import { IDocument } from '../interfaces/documents.interface';
 
 @Injectable()

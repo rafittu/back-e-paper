@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateDocumentService } from '../services/create_document.service';
+import { CreateDocumentService } from '../services/create-document.service';
 import { MinioService } from '../../../common/aws/minio.service';
 import { IDocumentsRepository } from '../interfaces/repository.interface';
 import {
@@ -11,15 +11,17 @@ import {
   MockUpdateDocumentDto,
 } from './mocks/documents.mock';
 import { AppError } from '../../../common/errors/Error';
-import { FindAllDocumentsService } from '../services/find_all_documents.service';
+import { FindAllDocumentsService } from '../services/find-all-documents.service';
 import { UpdateDocumentService } from '../services/update-document.service';
-import { FindDocumentByIdService } from '../services/document-by-id.service';
+import { DocumentByIdService } from '../services/document-by-id.service';
 import { DeleteDocumentService } from '../services/delete-document.service';
+import { DocumentsByFilterService } from '../services/documents-by-filter.service';
 
 describe('DocumentsService', () => {
   let createDocument: CreateDocumentService;
   let findAllDocuments: FindAllDocumentsService;
-  let findDocumentById: FindDocumentByIdService;
+  let findDocumentsByFilter: DocumentsByFilterService;
+  let findDocumentById: DocumentByIdService;
   let updateDocument: UpdateDocumentService;
   let deleteDocument: DeleteDocumentService;
 
@@ -31,8 +33,9 @@ describe('DocumentsService', () => {
       providers: [
         CreateDocumentService,
         FindAllDocumentsService,
+        DocumentsByFilterService,
         UpdateDocumentService,
-        FindDocumentByIdService,
+        DocumentByIdService,
         DeleteDocumentService,
         {
           provide: MinioService,
@@ -51,6 +54,9 @@ describe('DocumentsService', () => {
           useValue: {
             createDocument: jest.fn().mockResolvedValue(MockIDocument),
             findAllDocuments: jest.fn().mockResolvedValue(MockDocumentsList),
+            findDocumentsByFilter: jest
+              .fn()
+              .mockResolvedValue(MockDocumentsList),
             findDocumentById: jest.fn().mockResolvedValue(MockIDocument),
             updateDocument: jest.fn().mockResolvedValue(MockUpdatedDocument),
             deleteDocument: jest.fn().mockResolvedValue(null),
@@ -63,9 +69,10 @@ describe('DocumentsService', () => {
     findAllDocuments = module.get<FindAllDocumentsService>(
       FindAllDocumentsService,
     );
-    findDocumentById = module.get<FindDocumentByIdService>(
-      FindDocumentByIdService,
+    findDocumentsByFilter = module.get<DocumentsByFilterService>(
+      DocumentsByFilterService,
     );
+    findDocumentById = module.get<DocumentByIdService>(DocumentByIdService);
     updateDocument = module.get<UpdateDocumentService>(UpdateDocumentService);
     deleteDocument = module.get<DeleteDocumentService>(DeleteDocumentService);
 
@@ -78,6 +85,7 @@ describe('DocumentsService', () => {
   it('should be defined', () => {
     expect(createDocument).toBeDefined();
     expect(findAllDocuments).toBeDefined();
+    expect(findDocumentsByFilter).toBeDefined();
     expect(findDocumentById).toBeDefined();
     expect(updateDocument).toBeDefined();
     expect(deleteDocument).toBeDefined();
@@ -157,7 +165,32 @@ describe('DocumentsService', () => {
     });
   });
 
-  describe('find all documents', () => {
+  describe('find documents by filter', () => {
+    it('should get documents by filter successfully', async () => {
+      const filters = { issuer: MockIDocument.issuer };
+
+      const result = await findDocumentsByFilter.execute(filters);
+
+      expect(documentsRepository.findDocumentsByFilter).toHaveBeenCalledWith(
+        filters,
+      );
+      expect(result).toEqual(MockDocumentsList);
+    });
+
+    it('should throw an error if repository fails', async () => {
+      jest
+        .spyOn(documentsRepository, 'findDocumentsByFilter')
+        .mockRejectedValueOnce(new AppError());
+
+      try {
+        await findDocumentsByFilter.execute({ issuer: MockIDocument.issuer });
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+      }
+    });
+  });
+
+  describe('find document by id', () => {
     it('should retrieve document by id', async () => {
       const result = await findDocumentById.execute(MockIDocument.id);
 

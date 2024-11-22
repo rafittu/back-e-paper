@@ -5,6 +5,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Get,
+  Query,
   Put,
   Param,
   Delete,
@@ -12,10 +13,12 @@ import {
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
-import { CreateDocumentService } from './services/create_document.service';
+import { CreateDocumentService } from './services/create-document.service';
 import { IDocument } from './interfaces/documents.interface';
-import { FindAllDocumentsService } from './services/find_all_documents.service';
-import { FindDocumentByIdService } from './services/document-by-id.service';
+import { FindAllDocumentsService } from './services/find-all-documents.service';
+import { FilterDocumentsDto } from './dto/filter-documents.dto';
+import { DocumentsByFilterService } from './services/documents-by-filter.service';
+import { DocumentByIdService } from './services/document-by-id.service';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import { UpdateDocumentService } from './services/update-document.service';
 import { DeleteDocumentService } from './services/delete-document.service';
@@ -25,7 +28,8 @@ export class DocumentsController {
   constructor(
     private readonly createDocument: CreateDocumentService,
     private readonly findAllDocuments: FindAllDocumentsService,
-    private readonly findDocumentById: FindDocumentByIdService,
+    private readonly documentsByFilter: DocumentsByFilterService,
+    private readonly documentById: DocumentByIdService,
     private readonly updateDocument: UpdateDocumentService,
     private readonly deleteDocument: DeleteDocumentService,
   ) {}
@@ -44,9 +48,16 @@ export class DocumentsController {
     return this.findAllDocuments.execute();
   }
 
+  @Get('/search')
+  async findByFilters(
+    @Query() filters: FilterDocumentsDto,
+  ): Promise<IDocument[]> {
+    return this.documentsByFilter.execute(filters);
+  }
+
   @Get('/:id')
   async findById(@Param('id') id: string): Promise<IDocument> {
-    return this.findDocumentById.execute(id);
+    return this.documentById.execute(id);
   }
 
   @Put('/update/:id')

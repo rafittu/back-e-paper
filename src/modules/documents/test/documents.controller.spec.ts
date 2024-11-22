@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DocumentsController } from '../documents.controller';
-import { CreateDocumentService } from '../services/create_document.service';
+import { CreateDocumentService } from '../services/create-document.service';
 import {
   MockCreateDocumentDto,
   MockDocumentFile,
@@ -9,16 +9,18 @@ import {
   MockUpdatedDocument,
   MockUpdateDocumentDto,
 } from './mocks/documents.mock';
-import { FindAllDocumentsService } from '../services/find_all_documents.service';
+import { FindAllDocumentsService } from '../services/find-all-documents.service';
 import { UpdateDocumentService } from '../services/update-document.service';
-import { FindDocumentByIdService } from '../services/document-by-id.service';
+import { DocumentByIdService } from '../services/document-by-id.service';
 import { DeleteDocumentService } from '../services/delete-document.service';
+import { DocumentsByFilterService } from '../services/documents-by-filter.service';
 
 describe('DocumentsController', () => {
   let controller: DocumentsController;
   let createDocument: CreateDocumentService;
   let findAllDocuments: FindAllDocumentsService;
-  let findDocumentById: FindDocumentByIdService;
+  let findDocumentByFilter: DocumentsByFilterService;
+  let findDocumentById: DocumentByIdService;
   let updateDocument: UpdateDocumentService;
   let deleteDocument: DeleteDocumentService;
 
@@ -39,7 +41,13 @@ describe('DocumentsController', () => {
           },
         },
         {
-          provide: FindDocumentByIdService,
+          provide: DocumentsByFilterService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(MockDocumentsList),
+          },
+        },
+        {
+          provide: DocumentByIdService,
           useValue: {
             execute: jest.fn().mockResolvedValue(MockIDocument),
           },
@@ -64,9 +72,10 @@ describe('DocumentsController', () => {
     findAllDocuments = module.get<FindAllDocumentsService>(
       FindAllDocumentsService,
     );
-    findDocumentById = module.get<FindDocumentByIdService>(
-      FindDocumentByIdService,
+    findDocumentByFilter = module.get<DocumentsByFilterService>(
+      DocumentsByFilterService,
     );
+    findDocumentById = module.get<DocumentByIdService>(DocumentByIdService);
     updateDocument = module.get<UpdateDocumentService>(UpdateDocumentService);
     deleteDocument = module.get<DeleteDocumentService>(DeleteDocumentService);
   });
@@ -92,6 +101,16 @@ describe('DocumentsController', () => {
       const result = await controller.findAll();
 
       expect(findAllDocuments.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(MockDocumentsList);
+    });
+  });
+
+  describe('find documents by filter', () => {
+    it('should get documents by filter successfully', async () => {
+      const filters = { issuer: MockIDocument.issuer };
+      const result = await controller.findByFilters(filters);
+
+      expect(findDocumentByFilter.execute).toHaveBeenCalledWith(filters);
       expect(result).toEqual(MockDocumentsList);
     });
   });
