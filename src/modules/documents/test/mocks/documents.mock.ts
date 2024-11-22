@@ -53,3 +53,5 @@ export const MockIDocument: IDocument = {
   createdAt: MockInsertResponse.created_at,
   updatedAt: MockInsertResponse.updated_at,
 };
+
+export const MockDocumentsList: IDocument[] = [MockIDocument, MockIDocument];
