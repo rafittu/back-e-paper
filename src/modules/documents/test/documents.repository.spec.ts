@@ -187,4 +187,35 @@ describe('DocumentsRepository', () => {
       }
     });
   });
+
+  describe('delete document', () => {
+    it('should delete a document successfully', async () => {
+      const mockDelete = jest.fn().mockResolvedValueOnce({ rowCount: 1 });
+      (db.delete as jest.Mock).mockImplementation(() => ({
+        where: jest.fn().mockReturnValue(mockDelete()),
+      }));
+
+      await repository.deleteDocument(MockIDocument.id);
+
+      expect(db.delete).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw an error if deletion fails', async () => {
+      const mockDelete = jest.fn().mockImplementation(() => {
+        throw new Error('Database error');
+      });
+
+      (db.delete as jest.Mock).mockImplementation(mockDelete);
+
+      try {
+        await repository.deleteDocument(MockIDocument.id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.message).toBe(
+          'failed to delete document. Error: Database error',
+        );
+        expect(error.code).toBe(500);
+      }
+    });
+  });
 });
