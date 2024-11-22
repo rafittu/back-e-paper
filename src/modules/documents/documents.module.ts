@@ -5,6 +5,7 @@ import { DocumentsRepository } from './repository/document.repository';
 import { CreateDocumentService } from './services/create_document.service';
 import { FindAllDocumentsService } from './services/find_all_documents.service';
 import { UpdateDocumentService } from './services/update-document.service';
+import { FindDocumentByIdService } from './services/document-by-id.service';
 
 @Module({
   controllers: [DocumentsController],
@@ -16,6 +17,7 @@ import { UpdateDocumentService } from './services/update-document.service';
     },
     CreateDocumentService,
     FindAllDocumentsService,
+    FindDocumentByIdService,
     UpdateDocumentService,
   ],
 })
