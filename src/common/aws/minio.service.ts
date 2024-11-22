@@ -53,4 +53,21 @@ export class MinioService implements OnModuleInit {
       })
       .promise();
   }
+
+  async deleteFile(bucket: string, key: string): Promise<void> {
+    try {
+      await this.s3
+        .deleteObject({
+          Bucket: bucket,
+          Key: key,
+        })
+        .promise();
+    } catch (error) {
+      throw new AppError(
+        'aws-minioService.deleteFile',
+        500,
+        `failed to delete file from bucket. ${error}`,
+      );
+    }
+  }
 }
