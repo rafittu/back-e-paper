@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { IDocumentsRepository } from '../interfaces/repository.interface';
-import { convertStringsToNumbers } from '../../../modules/utils/document_utils';
+import { parseDocumentNumbers } from '../../../modules/utils/document_utils';
 import { IDocument } from '../interfaces/documents.interface';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class FindAllDocumentsService {
   async execute(): Promise<IDocument[]> {
     try {
       const documents = await this.documentsRepository.findAllDocuments();
-      return convertStringsToNumbers(documents) as IDocument[];
+      return parseDocumentNumbers(documents) as IDocument[];
     } catch (error) {
       throw error;
     }
