@@ -8,6 +8,8 @@ import {
   mapSnakeCaseToCamelCase,
 } from '../../utils/document-utils';
 import { FilterDocumentsDto } from '../dto/filter-documents.dto';
+import { and, eq } from 'drizzle-orm';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class DocumentsRepository {
@@ -46,16 +48,25 @@ export class DocumentsRepository {
   async findDocumentsByFilter(
     filters: FilterDocumentsDto,
   ): Promise<IDocument[]> {
-    let query;
+    const filtersData = plainToInstance(Object, filters);
+    const snakeCaseFilters = mapCamelCaseToSnakeCase(filtersData);
 
     try {
-      query = db.select().from(documents);
+      const conditions: any[] = [];
 
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value && key in documents) {
-          query = query.where(documents[key].eq(value));
+      Object.entries(snakeCaseFilters).forEach(([key, value]) => {
+        if (value !== undefined && key in documents) {
+          conditions.push(eq(documents[key], value));
         }
       });
+
+      const query =
+        conditions.length > 0
+          ? db
+              .select()
+              .from(documents)
+              .where(and(...conditions))
+          : db.select().from(documents);
 
       const results = await query;
       return results.map(mapSnakeCaseToCamelCase);
