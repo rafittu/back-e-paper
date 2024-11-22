@@ -3,7 +3,10 @@ import { IDocumentsRepository } from '../interfaces/repository.interface';
 import { CreateDocumentDto } from '../dto/create-document.dto';
 import { AppError } from '../../../common/errors/Error';
 import { MinioService } from '../../../common/aws/minio.service';
-import { normalizeFileName } from '../../../modules/utils/document_utils';
+import {
+  convertStringsToNumbers,
+  normalizeFileName,
+} from '../../../modules/utils/document_utils';
 import { IDocument } from '../interfaces/documents.interface';
 
 @Injectable()
@@ -58,15 +61,7 @@ export class CreateDocumentService {
         fileUrl: uploadedFile.Location,
       });
 
-      const { totalTaxes, netValue } = data;
-
-      const createdDocument = {
-        ...data,
-        totalTaxes: parseFloat(totalTaxes as unknown as string),
-        netValue: parseFloat(netValue as unknown as string),
-      };
-
-      return createdDocument;
+      return convertStringsToNumbers(data) as IDocument;
     } catch (error) {
       if (error instanceof AppError) {
         throw error;
