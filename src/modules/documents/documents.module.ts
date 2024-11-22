@@ -4,6 +4,7 @@ import { MinioService } from '../../common/aws/minio.service';
 import { DocumentsRepository } from './repository/document.repository';
 import { CreateDocumentService } from './services/create-document.service';
 import { FindAllDocumentsService } from './services/find-all-documents.service';
+import { DocumentsByFilterService } from './services/documents-by-filter.service';
 
 @Module({
   controllers: [DocumentsController],
@@ -15,6 +16,7 @@ import { FindAllDocumentsService } from './services/find-all-documents.service';
     },
     CreateDocumentService,
     FindAllDocumentsService,
+    DocumentsByFilterService,
   ],
 })
 export class DocumentsModule {}
