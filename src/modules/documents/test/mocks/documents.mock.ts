@@ -29,6 +29,7 @@ export const MockDocumentFile = {
 
 export const MockCreateDocumentInterface: ICreateDocument = {
   ...MockCreateDocumentDto,
+  bucketFileName: MockDocumentFile.fieldname,
   fileUrl: faker.internet.url(),
 };
 
@@ -40,6 +41,7 @@ export const MockInsertResponse = {
   document_type: MockCreateDocumentInterface.documentType,
   total_taxes: MockCreateDocumentInterface.totalTaxes,
   net_value: MockCreateDocumentInterface.netValue,
+  bucket_file_name: MockCreateDocumentInterface.bucketFileName,
   file_url: MockCreateDocumentInterface.fileUrl,
   created_at: faker.date.past(),
   updated_at: faker.date.recent(),
