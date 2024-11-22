@@ -29,7 +29,7 @@ export class DocumentsController {
     return this.createDocumentService.execute(createDocumentDto, file);
   }
 
-  @Get()
+  @Get('/all')
   async findAll(): Promise<IDocument[]> {
     return this.findAllDocumentsService.execute();
   }
