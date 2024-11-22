@@ -11,11 +11,13 @@ import {
 } from './mocks/documents.mock';
 import { FindAllDocumentsService } from '../services/find_all_documents.service';
 import { UpdateDocumentService } from '../services/update-document.service';
+import { FindDocumentByIdService } from '../services/document-by-id.service';
 
 describe('DocumentsController', () => {
   let controller: DocumentsController;
   let createDocument: CreateDocumentService;
   let findAllDocuments: FindAllDocumentsService;
+  let findDocumentById: FindDocumentByIdService;
   let updateDocument: UpdateDocumentService;
 
   beforeEach(async () => {
@@ -35,6 +37,12 @@ describe('DocumentsController', () => {
           },
         },
         {
+          provide: FindDocumentByIdService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(MockIDocument),
+          },
+        },
+        {
           provide: UpdateDocumentService,
           useValue: {
             execute: jest.fn().mockResolvedValue(MockUpdatedDocument),
@@ -47,6 +55,9 @@ describe('DocumentsController', () => {
     createDocument = module.get<CreateDocumentService>(CreateDocumentService);
     findAllDocuments = module.get<FindAllDocumentsService>(
       FindAllDocumentsService,
+    );
+    findDocumentById = module.get<FindDocumentByIdService>(
+      FindDocumentByIdService,
     );
     updateDocument = module.get<UpdateDocumentService>(UpdateDocumentService);
   });
@@ -73,6 +84,15 @@ describe('DocumentsController', () => {
 
       expect(findAllDocuments.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(MockDocumentsList);
+    });
+  });
+
+  describe('find document by id', () => {
+    it('should get document successfully', async () => {
+      const result = await controller.findById(MockIDocument.id);
+
+      expect(findDocumentById.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(MockIDocument);
     });
   });
 

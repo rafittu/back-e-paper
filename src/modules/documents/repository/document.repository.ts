@@ -48,8 +48,7 @@ export class DocumentsRepository {
       const [document] = await db
         .select()
         .from(documents)
-        .where(eq(documents.id, id))
-        .limit(1);
+        .where(eq(documents.id, id));
 
       return mapSnakeCaseToCamelCase(document);
     } catch (error) {
