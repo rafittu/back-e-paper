@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsEnum, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsString, IsEnum, IsNumber, Min } from 'class-validator';
 import { DocumentOriginEnum, DocumentTypeEnum } from '../../../database/schema';
 import { Type } from 'class-transformer';
 
@@ -21,11 +21,13 @@ export class CreateDocumentDto {
 
   @IsNotEmpty()
   @Type(() => Number)
+  @Min(0)
   @IsNumber()
   totalTaxes: number;
 
   @IsNotEmpty()
   @Type(() => Number)
+  @Min(0)
   @IsNumber()
   netValue: number;
 }

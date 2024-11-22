@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateDocumentDto } from './create-document.dto';
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { DocumentOriginEnum, DocumentTypeEnum } from '../../../database/schema';
 import { Type } from 'class-transformer';
 
@@ -23,11 +23,13 @@ export class UpdateDocumentDto extends PartialType(CreateDocumentDto) {
 
   @IsOptional()
   @Type(() => Number)
+  @Min(0)
   @IsNumber()
   totalTaxes?: number;
 
   @IsOptional()
   @Type(() => Number)
+  @Min(0)
   @IsNumber()
   netValue?: number;
 }
