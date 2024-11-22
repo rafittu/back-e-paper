@@ -43,6 +43,24 @@ export class DocumentsRepository {
     }
   }
 
+  async findDocumentById(id: string): Promise<IDocument> {
+    try {
+      const [document] = await db
+        .select()
+        .from(documents)
+        .where(eq(documents.id, id))
+        .limit(1);
+
+      return mapSnakeCaseToCamelCase(document);
+    } catch (error) {
+      throw new AppError(
+        'documents-repository.findDocumentById',
+        500,
+        `failed to retrieve document by id. ${error}`,
+      );
+    }
+  }
+
   async updateDocument(
     id: string,
     data: Partial<ICreateDocument>,
