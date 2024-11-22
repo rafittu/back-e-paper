@@ -8,7 +8,7 @@ import {
   parseDocumentNumbers,
 } from '../../../modules/utils/document_utils';
 import { plainToInstance } from 'class-transformer';
-import { MinioService } from 'src/common/aws/minio.service';
+import { MinioService } from '../../../common/aws/minio.service';
 
 @Injectable()
 export class UpdateDocumentService {
