@@ -1,13 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { IDocumentsRepository } from '../interfaces/repository.interface';
 import { UpdateDocumentDto } from '../dto/update-document.dto';
 import { IDocument } from '../interfaces/documents.interface';
 import { AppError } from 'src/common/errors/Error';
 import { convertStringsToNumbers } from 'src/modules/utils/document_utils';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UpdateDocumentService {
-  constructor(private readonly documentsRepository: IDocumentsRepository) {}
+  constructor(
+    @Inject('IDocumentsRepository')
+    private readonly documentsRepository: IDocumentsRepository,
+  ) {}
 
   async execute(
     id: string,
@@ -22,9 +26,11 @@ export class UpdateDocumentService {
     }
 
     try {
+      const document = plainToInstance(Object, updateDocumentDto);
+
       const updatedDocument = await this.documentsRepository.updateDocument(
         id,
-        updateDocumentDto,
+        document,
       );
 
       return convertStringsToNumbers(updatedDocument) as IDocument;
