@@ -5,8 +5,7 @@
       "description": "API para gerenciamento de documentos, incluindo upload e operações CRUD.",
       "version": "1.0.0",
       "contact": {
-        "name": "Seu Nome",
-        "email": "seu.email@dominio.com"
+        "name": "Rafael Ribeiro"
       }
     },
     "servers": [
