@@ -1,0 +1,1 @@
+ALTER TABLE "documents" ADD COLUMN "bucket_file_name" text NOT NULL;

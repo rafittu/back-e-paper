@@ -1,73 +1,110 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+# 📄 Back-end para Gerenciamento de Documentos
+<br>
+
+Este repositório contém a API para gerenciamento de documentos. A aplicação foi desenvolvida com **NestJS** e **TypeScript**, utilizando o **Drizzle ORM** para comunicação com o banco de dados PostgreSQL, e o **MinIO** para armazenamento seguro de arquivos. A API permite realizar operações CRUD completas, incluindo upload e manipulação de arquivos.
+
+###
+<br>
+
+## 🛠 Tecnologias Utilizadas
+
+- **NestJS** com **TypeScript** para construção do back-end.
+- **Drizzle ORM** para interação com o banco de dados PostgreSQL.
+- **MinIO** para armazenamento de documentos, com integração usando AWS SDK.
+- **Docker** e **Docker Compose** para orquestração de contêineres.
+- **GitHub Actions** para CI/CD e automação de testes.
+- **Jest** para testes unitários e de integração.
+- **Helmet** para reforço de segurança em cabeçalhos HTTP.
+- **Swagger** para documentação interativa da API.
+
+<br>
+
+## ⚙️ Funcionalidades
+
+### Gerenciamento de Documentos
+- Criar, listar, buscar por filtros, atualizar e excluir documentos.
+- Upload seguro de arquivos para o servidor MinIO.
+- Conversão e validação automática de valores numéricos e strings.
+
+<br>
+
+## 🚀 Instruções de Configuração
+
+### Pré-requisitos
+- **Node.js** (v16 ou superior);
+- **Docker** e **Docker Compose**;
+- Configuração do ambiente no arquivo `.env` (com base no `.env.example`).
+
+## Passo-a-passo para Iniciar a Aplicação
+
+1. Clone o repositório:
+
+  ```bash
+   git clone https://github.com/rafittu/back-e-paper.git
+   cd back-e-paper
+  ```
+2. Configure as variáveis de ambiente:
+
+    Crie um arquivo .env baseado no .env.example e insira suas credenciais do banco de dados e do MinIO.
+
+3. Suba o ambiente de desenvolvimento:
+
+```bash
+docker-compose up --build
+```
+
+4. Acesse a documentação da API no Swagger:
+
+  URL: http://localhost:3000/api-docs.
+
+<br>
+
+## 🔍 Endpoints Principais
+
+  ### 📂 Documentos:
+  - `POST /documents/create`: Upload e criação de documento.
+  - `GET /documents/all`: Listar todos os documentos.
+  - `GET /documents/search`: Buscar documentos por filtros.
+  - `GET /documents/:id`: Buscar documento por ID.
+  - `PUT /documents/update/:id`: Atualizar um documento existente.
+  - `DELETE /documents/delete/:id`: Excluir um documento.
+
+<br>
+
+## 🧪 Testes Automatizados
+
+Os testes verificam todas as funcionalidades principais, incluindo upload, manipulação de arquivos e interações com o banco de dados.
+
+Executar os Testes:
+```bash
+npm run test
+```
+
+Cobertura de Testes:
+```bash
+npm run test:cov
+```
+
+<br>
+
+## 📖 Documentação da API
+
+A documentação completa da API está disponível através do Swagger. Para acessá-la, siga as etapas abaixo:
+
+- Certifique-se de ter a API em execução localmente ou em um ambiente acessível;
+- Abra um navegador da web e acesse a seguinte URL: `http://localhost:3000/v1/api-doc` (substitua `3000` pelo número da porta inserida no arquivo `.env`);
+- A documentação interativa da API será exibida no Swagger UI, onde você poderá explorar todos os endpoints, seus parâmetros e exemplos de solicitação/resposta.
+
+<br>
+
+## 🛳 Deploy
+
+A aplicação está configurada para CI/CD utilizando GitHub Actions. Cada alteração no código é automaticamente testada e, após aprovação, pode ser enviada para o ambiente de produção.
+
+<br>
+
+##
+
+<p align="right">
+  <a href="https://www.linkedin.com/in/rafittu/">Rafael Ribeiro 🚀</a>
 </p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
-```bash
-$ npm install
-```
-
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
