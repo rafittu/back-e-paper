@@ -1,0 +1,220 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Document Management API",
+      "description": "API para gerenciamento de documentos, incluindo upload e operações CRUD.",
+      "version": "1.0.0",
+      "contact": {
+        "name": "Seu Nome",
+        "email": "seu.email@dominio.com"
+      }
+    },
+    "servers": [
+      {
+        "url": "http://localhost:3000",
+        "description": "Ambiente de desenvolvimento"
+      }
+    ],
+    "paths": {
+      "/documents/create": {
+        "post": {
+          "summary": "Criar Documento",
+          "description": "Faz o upload de um documento e cria um registro no banco de dados.",
+          "requestBody": {
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "documentName": { "type": "string" },
+                    "issuer": { "type": "string" },
+                    "documentOrigin": { "type": "string", "enum": ["SCANNED", "ELECTRONIC"] },
+                    "documentType": { "type": "string", "enum": ["CONTRACT", "INVOICE"] },
+                    "totalTaxes": { "type": "number" },
+                    "netValue": { "type": "number" },
+                    "file": { "type": "string", "format": "binary" }
+                  },
+                  "required": ["documentName", "issuer", "documentOrigin", "documentType", "file"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "Documento criado com sucesso." },
+            "400": { "description": "Erro de validação ou campos obrigatórios ausentes." }
+          }
+        }
+      },
+      "/documents/all": {
+        "get": {
+          "summary": "Listar Documentos",
+          "description": "Retorna todos os documentos cadastrados.",
+          "responses": {
+            "200": {
+              "description": "Lista de documentos.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/Document" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/documents/search": {
+        "get": {
+          "summary": "Buscar Documentos",
+          "description": "Busca documentos utilizando filtros como nome, tipo, ou origem.",
+          "parameters": [
+            {
+              "name": "documentName",
+              "in": "query",
+              "schema": { "type": "string" },
+              "description": "Nome do documento"
+            },
+            {
+              "name": "issuer",
+              "in": "query",
+              "schema": { "type": "string" },
+              "description": "Emitente do documento"
+            },
+            {
+              "name": "documentType",
+              "in": "query",
+              "schema": { "type": "string", "enum": ["CONTRACT", "INVOICE"] },
+              "description": "Tipo de documento"
+            },
+            {
+              "name": "documentOrigin",
+              "in": "query",
+              "schema": { "type": "string", "enum": ["SCANNED", "ELECTRONIC"] },
+              "description": "Origem do documento"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Lista de documentos filtrados.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/Document" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/documents/{id}": {
+        "get": {
+          "summary": "Buscar Documento por ID",
+          "description": "Busca um documento pelo seu ID.",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" },
+              "description": "ID do documento"
+            }
+          ],
+          "responses": {
+            "200": { "$ref": "#/components/responses/DocumentFound" },
+            "404": { "description": "Documento não encontrado." }
+          }
+        },
+        "put": {
+          "summary": "Atualizar Documento",
+          "description": "Atualiza os dados de um documento existente.",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" },
+              "description": "ID do documento"
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UpdateDocument" }
+              }
+            }
+          },
+          "responses": {
+            "200": { "$ref": "#/components/responses/DocumentUpdated" },
+            "404": { "description": "Documento não encontrado." }
+          }
+        },
+        "delete": {
+          "summary": "Excluir Documento",
+          "description": "Exclui um documento pelo seu ID.",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" },
+              "description": "ID do documento"
+            }
+          ],
+          "responses": {
+            "204": { "description": "Documento excluído com sucesso." },
+            "404": { "description": "Documento não encontrado." }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Document": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "documentName": { "type": "string" },
+            "issuer": { "type": "string" },
+            "documentOrigin": { "type": "string" },
+            "documentType": { "type": "string" },
+            "totalTaxes": { "type": "number" },
+            "netValue": { "type": "number" },
+            "createdAt": { "type": "string", "format": "date-time" },
+            "updatedAt": { "type": "string", "format": "date-time" }
+          }
+        },
+        "UpdateDocument": {
+          "type": "object",
+          "properties": {
+            "documentName": { "type": "string" },
+            "issuer": { "type": "string" },
+            "documentOrigin": { "type": "string" },
+            "documentType": { "type": "string" },
+            "totalTaxes": { "type": "number" },
+            "netValue": { "type": "number" }
+          }
+        }
+      },
+      "responses": {
+        "DocumentFound": {
+          "description": "Documento encontrado.",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Document" }
+            }
+          }
+        },
+        "DocumentUpdated": {
+          "description": "Documento atualizado com sucesso.",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Document" }
+            }
+          }
+        }
+      }
+    }
+}
